@@ -1,11 +1,13 @@
 package com.korea.jtos.Answer;
 
 import com.korea.jtos.Question.Question;
+import com.korea.jtos.User.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -23,4 +25,12 @@ public class Answer {
 
     @ManyToOne
     private Question question;
+
+    @ManyToOne
+    private SiteUser author;
+
+    private LocalDateTime modifyDate;
+
+    @ManyToMany
+    Set<SiteUser> voter;
 }
