@@ -44,7 +44,9 @@ public class QuestionService {
 
     public Page<Question> getList(int page,String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
-        sorts.add(Sort.Order.desc("createDate"));
+        // CreateDate 말고 ID로 정렬해야 정렬이 제대로 가능
+        // TEST 데이터를 넣을 때 생성 시간이 같게 동시에 들어가서 순서가 제멋대로 변경이 됨
+        sorts.add(Sort.Order.desc("ID"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         return this.questionRepository.findAllByKeyword(kw, pageable);
     }
