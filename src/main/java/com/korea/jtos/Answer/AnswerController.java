@@ -7,6 +7,7 @@ import com.korea.jtos.User.SiteUser;
 import com.korea.jtos.User.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -29,7 +30,6 @@ public class AnswerController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
-    // 3장 11번 부터 답변 컨트롤러 수정하기 해야 됨
     public String createAnswer(Model model, @PathVariable("id") Integer id, @Valid AnswerForm answerForm,
                                BindingResult bindingResult, Principal principal) {
         Question question = this.questionService.getQuestion(id);
@@ -72,5 +72,6 @@ public class AnswerController {
         this.answerService.vote(answer,siteUser);
         return String.format("redirect:/question/detail/%s",answer.getQuestion().getId());
     }
+
 
 }

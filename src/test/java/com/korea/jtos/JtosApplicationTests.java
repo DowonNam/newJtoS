@@ -30,7 +30,7 @@ class JtosApplicationTests {
     void testJpa() {
         for(int i = 0; i < 25; i++){
             Question question = this.questionService.getQuestion(912);;
-            String content = "내용무";
+            String content = String.format("내용무입니다:[%03d]", i);
             this.answerService.create(question, content, null);
         }
     }
