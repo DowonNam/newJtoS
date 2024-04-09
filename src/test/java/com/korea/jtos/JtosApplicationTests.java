@@ -3,6 +3,7 @@ package com.korea.jtos;
 
 import com.korea.jtos.Answer.Answer;
 import com.korea.jtos.Answer.AnswerRepository;
+import com.korea.jtos.Answer.AnswerService;
 import com.korea.jtos.Question.Question;
 import com.korea.jtos.Question.QuestionRepository;
 import com.korea.jtos.Question.QuestionService;
@@ -22,13 +23,15 @@ class JtosApplicationTests {
 
     @Autowired
     private QuestionService questionService;
+    @Autowired
+    private AnswerService answerService;
 
     @Test
     void testJpa() {
-        for(int i = 0; i < 300; i++){
-            String subject = String.format("테스터 데이터입니다.[%03d]",i);
+        for(int i = 0; i < 25; i++){
+            Question question = this.questionService.getQuestion(912);;
             String content = "내용무";
-            this.questionService.create(subject,content,null);
+            this.answerService.create(question, content, null);
         }
     }
 }
