@@ -36,11 +36,16 @@
     </div>
     <!-- 답변의 갯수 표시 -->
     <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다.|"></h5>
+    <!-- 정렬 버튼 추가 -->
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-outline-secondary" th:href="@{/answer/listByPopularity/{id}(id=${question.id})}">인기순</button>
+        <button type="button" class="btn btn-outline-secondary" th:href="@{/answer/listByLatest/{id}(id=${question.id})}">최신순</button>
+    </div>
     <!-- 답변 반복 시작 -->
     <!-- 댓글 페이징 수정 시작 -->
     <div th:with="answers=${question.answerList}, paging=${paging}">
         <div class="card my-3" th:each="answer, loop : ${paging}">
-    <!-- 댓글 페이징 수정 끝 -->
+            <!-- 댓글 페이징 수정 끝 -->
             <a th:id="|answer_${answer.id}|"></a>
             <div class="card-body">
                 <div class="card-text" th:utext="${@commonUtil.markdown(answer.content)}"></div>
