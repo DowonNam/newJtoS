@@ -18,6 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class AnswerService {
+
     private final AnswerRepository answerRepository;
 
     public Answer create(Question question, String content, SiteUser author){

@@ -1,5 +1,6 @@
-package com.korea.jtos.Answer;
+package com.korea.jtos.Comment;
 
+import com.korea.jtos.Answer.Answer;
 import com.korea.jtos.Question.Question;
 import com.korea.jtos.User.SiteUser;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-public class Answer {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,10 +28,13 @@ public class Answer {
     private Question question;
 
     @ManyToOne
+    private Answer answer;
+
+    @ManyToOne
     private SiteUser author;
 
     private LocalDateTime modifyDate;
 
     @ManyToMany
     Set<SiteUser> voter;
-    }
+}

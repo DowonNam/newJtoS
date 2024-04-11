@@ -1,5 +1,6 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container my-3">
+
     <!-- 질문 -->
     <h2 class="border-bottom py-2" th:text="${question.subject}"></h2>
     <div class="card my-3">
@@ -33,6 +34,17 @@
                    th:text="삭제"></a>
             </div>
         </div>
+
+        <!-- 답변 작성 시작 -->
+        <form th:action="@{|/comment/createQuestion/${question.id}|}" th:object="${commentForm}" method="post" class="my-3 mx-2">
+            <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+            <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="2"></textarea>
+            <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="2"></textarea>
+            <input type="submit" value="댓글등록" class="btn btn-primary my-2">
+        </form>
+        <!-- 답변 작성 끝 -->
+
+
     </div>
     <!-- 답변의 갯수 표시 -->
     <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다.|"></h5>
@@ -77,17 +89,30 @@
                        th:text="삭제"></a>
                 </div>
             </div>
+            <!-- 답변 작성 시작 -->
+            <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3 mx-2">
+                <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+                <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="2"></textarea>
+                <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="2"></textarea>
+                <input type="submit" value="댓글등록" class="btn btn-primary my-2">
+            </form>
+            <!-- 답변 작성 끝 -->
         </div>
     </div>
     <!-- 답변 반복 끝  -->
-    <!-- 답변 작성 -->
+
+
+
+
+
+    <!-- 답변 작성 시작 -->
     <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
         <div th:replace="~{form_errors :: formErrorsFragment}"></div>
         <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="10"></textarea>
         <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
         <input type="submit" value="답변등록" class="btn btn-primary my-2">
     </form>
-
+    <!-- 답변 작성 끝 -->
     <!-- 페이징처리 시작 -->
     <div th:if="${!paging.isEmpty()}">
         <ul class="pagination justify-content-center">

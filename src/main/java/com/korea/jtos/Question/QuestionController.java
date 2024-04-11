@@ -7,6 +7,7 @@ import java.util.List;
 import com.korea.jtos.Answer.Answer;
 import com.korea.jtos.Answer.AnswerForm;
 import com.korea.jtos.Answer.AnswerService;
+import com.korea.jtos.Comment.CommentForm;
 import com.korea.jtos.User.SiteUser;
 import com.korea.jtos.User.UserService;
 import org.springframework.data.domain.Page;
@@ -41,7 +42,7 @@ public class QuestionController {
     }
 
     @GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm,
+    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm, CommentForm commentForm,
                          @RequestParam(value = "page", defaultValue = "0") int page) {
         Question question = this.questionService.getQuestion(id);
         Page<Answer> paging = this.answerService.getListByQuestionId(id,page);
