@@ -33,4 +33,12 @@ public class Answer {
 
     @ManyToMany
     Set<SiteUser> voter;
+
+    @Transient  // 데이터베이스에 저장되지 않음
+    private int voteCount;
+
+    // Getter와 Setter
+    public int getVoteCount() {
+        return voter.size();
+    }
 }

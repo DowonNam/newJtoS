@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequestMapping("/question")
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class QuestionController {
     public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm,
                          @RequestParam(value = "page", defaultValue = "0") int page) {
         Question question = this.questionService.getQuestion(id);
-        Page<Answer> paging = this.answerService.getList(id,page);
+        Page<Answer> paging = this.answerService.getListByQuestionId(id,page);
         model.addAttribute("paging", paging);
         model.addAttribute("question", question);
         return "question_detail";
@@ -111,5 +112,16 @@ public class QuestionController {
         return String.format("redirect:/question/detail/%s",id);
     }
 
+    @GetMapping(value = "/voter/{id}")
+    public String vote(Model model, @PathVariable("id") Integer id, AnswerForm answerForm,
+                       @RequestParam(value = "page", defaultValue = "0") int page,
+                       RedirectAttributes redirectAttributes) {
+
+        Question question = questionService.getQuestion(id);
+        Page<Answer> paging = answerService.getListByQuestionIdOrderByRecommendation(id, page);
+        model.addAttribute("question", question);
+        model.addAttribute("paging", paging);
+        return "question_detail";
+    }
 
 }
