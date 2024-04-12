@@ -1,7 +1,9 @@
 package com.korea.jtos.Answer;
 
+import com.korea.jtos.Comment.CommentForm;
 import com.korea.jtos.DataNotFoundException;
 import com.korea.jtos.Question.Question;
+import com.korea.jtos.Question.QuestionForm;
 import com.korea.jtos.Question.QuestionService;
 import com.korea.jtos.User.SiteUser;
 import com.korea.jtos.User.UserService;
@@ -44,13 +46,30 @@ public class AnswerController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String modifyAnswer(AnswerForm answerForm, @PathVariable("id") Integer id, Principal principal){
+    public String answerModify(AnswerForm answerForm,
+                               @PathVariable("id") Integer id, Principal principal) {
         Answer answer = this.answerService.getAnswer(id);
-        if(!answer.getAuthor().getUsername().equals(principal.getName())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"수정 권한이 없습니다.");
+        if (!answer.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
         }
         answerForm.setContent(answer.getContent());
-        return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(),answer.getId());
+        return "answer_form";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modify/{id}")
+    public String answerModify(@Valid AnswerForm answerForm,
+                               BindingResult bindingResult,
+                               Principal principal, @PathVariable("id") Integer id) {
+        if (bindingResult.hasErrors()) {
+            return "answer_form";
+        }
+        Answer answer = this.answerService.getAnswer(id);
+        if (!answer.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+        }
+        this.answerService.modify(answer,answerForm.getContent());
+        return String.format("redirect:/question/detail/%s#answer_%s",answer.getQuestion().getId(),answer.getId());
     }
 
     @PreAuthorize("isAuthenticated()")
