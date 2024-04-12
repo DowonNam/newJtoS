@@ -25,6 +25,7 @@ import java.security.Principal;
 @Controller
 public class CommentController {
 
+
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final UserService userService;
@@ -40,12 +41,14 @@ public class CommentController {
         if (bindingResult.hasErrors()) {
             Question question = questionService.getQuestion(id);
             model.addAttribute("question", question);
-            model.addAttribute("commentForm", commentForm);  // 폼 객체를 모델에 명시적으로 추가
-            return "question_detail"; // 에러가 있는 경우 다시 질문 상세 페이지로 리다이렉트
+            model.addAttribute("commentForm", commentForm);
+            model.addAttribute("org.springframework.validation.BindingResult.commentForm", bindingResult);
+            return "question_detail";
         }
         SiteUser siteuser = userService.getUser(principal.getName());
         Comment comment = commentService.create(questionService.getQuestion(id), commentForm.getContent(), siteuser);
         return String.format("redirect:/question/detail/%s#comment_%s", comment.getQuestion().getId(), comment.getId());
     }
+
 
 }

@@ -34,22 +34,38 @@ public class QuestionController {
 
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
-                       @RequestParam(value = "kw",defaultValue = "")String kw) {
-        Page<Question> paging = this.questionService.getList(page,kw);
-        model.addAttribute("paging",paging);
-        model.addAttribute("kw",kw);
+                       @RequestParam(value = "kw", defaultValue = "") String kw) {
+        Page<Question> paging = this.questionService.getList(page, kw);
+        model.addAttribute("paging", paging);
+        model.addAttribute("kw", kw);
         return "question_list";
     }
 
     @GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm, CommentForm commentForm,
+    public String detail(Model model, @PathVariable("id") Integer id,
+                         @ModelAttribute("answerForm") AnswerForm answerForm, BindingResult answerBindingResult,
+                         @ModelAttribute("commentForm") CommentForm commentForm, BindingResult commentBindingResult,
                          @RequestParam(value = "page", defaultValue = "0") int page) {
         Question question = this.questionService.getQuestion(id);
-        Page<Answer> paging = this.answerService.getListByQuestionId(id,page);
+        Page<Answer> paging = this.answerService.getListByQuestionId(id, page);
+
         model.addAttribute("paging", paging);
         model.addAttribute("question", question);
+        model.addAttribute("answerForm", answerForm);
+        model.addAttribute("commentForm", commentForm);
+
+        // IF 문을 안 넣어줘도 상관 없음
+        // 바인딩 결과가 모델에 포함되지 않은 경우 추가
+        if (!model.containsAttribute("org.springframework.validation.BindingResult.answerForm")) {
+            model.addAttribute("org.springframework.validation.BindingResult.answerForm", answerBindingResult);
+        }
+        if (!model.containsAttribute("org.springframework.validation.BindingResult.commentForm")) {
+            model.addAttribute("org.springframework.validation.BindingResult.commentForm", commentBindingResult);
+        }
+
         return "question_detail";
     }
+
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
@@ -64,15 +80,16 @@ public class QuestionController {
             return "question_form";
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.questionService.create(questionForm.getSubject(), questionForm.getContent(),siteUser);
+        this.questionService.create(questionForm.getSubject(), questionForm.getContent(), siteUser);
         return "redirect:/question/list";
     }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String questionModify(QuestionForm questionForm, @PathVariable("id") Integer id, Principal principal){
+    public String questionModify(QuestionForm questionForm, @PathVariable("id") Integer id, Principal principal) {
         Question question = this.questionService.getQuestion(id);
-        if(!question.getAuthor().getUsername().equals(principal.getName())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"수정 권한이 없습니다.");
+        if (!question.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
         }
         questionForm.setSubject(question.getSubject());
         questionForm.setContent(question.getContent());
@@ -93,12 +110,13 @@ public class QuestionController {
         this.questionService.modify(question, questionForm.getSubject(), questionForm.getContent());
         return String.format("redirect:/question/detail/%s", id);
     }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
-    public String questionDelete(Principal principal, @PathVariable("id") Integer id){
+    public String questionDelete(Principal principal, @PathVariable("id") Integer id) {
         Question question = this.questionService.getQuestion(id);
-        if(!question.getAuthor().getUsername().equals(principal.getName())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"삭제 권한이 없습니다.");
+        if (!question.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다.");
         }
         this.questionService.delete(question);
         return "redirect:/";
@@ -106,22 +124,25 @@ public class QuestionController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
-    public String questionVote(Principal principal, @PathVariable("id") Integer id){
+    public String questionVote(Principal principal, @PathVariable("id") Integer id) {
         Question question = this.questionService.getQuestion(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.questionService.vote(question,siteUser);
-        return String.format("redirect:/question/detail/%s",id);
+        this.questionService.vote(question, siteUser);
+        return String.format("redirect:/question/detail/%s", id);
     }
 
-    @GetMapping(value = "/voter/{id}")
-    public String vote(Model model, @PathVariable("id") Integer id, AnswerForm answerForm,
-                       @RequestParam(value = "page", defaultValue = "0") int page,
-                       RedirectAttributes redirectAttributes) {
 
-        Question question = questionService.getQuestion(id);
-        Page<Answer> paging = answerService.getListByQuestionIdOrderByRecommendation(id, page);
+    @GetMapping(value = "/voter/{id}")
+    public String sortByPopularity(Model model, @PathVariable("id") Integer id,
+                                   @RequestParam(value = "page", defaultValue = "0") int page) {
+        Question question = this.questionService.getQuestion(id);
+        Page<Answer> paging = this.answerService.getListByQuestionIdOrderByRecommendation(id, page);
+
         model.addAttribute("question", question);
         model.addAttribute("paging", paging);
+        model.addAttribute("answerForm", new AnswerForm());
+        model.addAttribute("commentForm", new CommentForm());
+
         return "question_detail";
     }
 
