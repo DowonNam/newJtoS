@@ -1,5 +1,6 @@
 package com.korea.jtos.Question;
 
+import com.korea.jtos.Category.Category;
 import com.korea.jtos.Comment.Comment;
 import com.korea.jtos.Answer.Answer;
 import com.korea.jtos.User.SiteUser;
@@ -41,4 +42,7 @@ public class Question {
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
     private List<Comment> commentList;
+
+    @ManyToOne
+    private Category category;
 }
