@@ -1,5 +1,6 @@
 package com.korea.jtos.Question;
 
+import com.korea.jtos.Comment.Comment;
 import com.korea.jtos.Answer.Answer;
 import com.korea.jtos.User.SiteUser;
 import jakarta.persistence.*;
@@ -37,4 +38,7 @@ public class Question {
 
     @ManyToMany
     Set<SiteUser> voter;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList;
 }

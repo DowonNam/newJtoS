@@ -7,6 +7,7 @@ import java.util.List;
 import com.korea.jtos.Answer.Answer;
 import com.korea.jtos.Answer.AnswerForm;
 import com.korea.jtos.Answer.AnswerService;
+import com.korea.jtos.Comment.Comment;
 import com.korea.jtos.Comment.CommentForm;
 import com.korea.jtos.User.SiteUser;
 import com.korea.jtos.User.UserService;
