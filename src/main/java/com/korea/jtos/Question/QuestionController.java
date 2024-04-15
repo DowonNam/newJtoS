@@ -100,13 +100,16 @@ public class QuestionController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String questionModify(QuestionForm questionForm, @PathVariable("id") Integer id, Principal principal) {
+    public String questionModify(QuestionForm questionForm,
+                                 @PathVariable("id") Integer id, Principal principal,Model model) {
         Question question = this.questionService.getQuestion(id);
         if (!question.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
         }
         questionForm.setSubject(question.getSubject());
         questionForm.setContent(question.getContent());
+        List<Category> categoryList = categoryService.getAllCategories(); // 카테고리 서비스를 통해 카테고리 목록을 가져옴
+        model.addAttribute("categoryList", categoryList); // 모델에 카테고리 목록 추가
         return "question_form";
     }
 
@@ -122,7 +125,7 @@ public class QuestionController {
         if (!question.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-        this.questionService.modify(question, questionForm.getSubject(), questionForm.getContent());
+        this.questionService.modify(question, questionForm.getSubject(), questionForm.getContent(),questionForm.getCategory());
         return String.format("redirect:/question/detail/%s", id);
     }
 
