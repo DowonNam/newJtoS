@@ -7,6 +7,7 @@ import java.util.List;
 import com.korea.jtos.Answer.Answer;
 import com.korea.jtos.Answer.AnswerForm;
 import com.korea.jtos.Answer.AnswerService;
+import com.korea.jtos.Category.Category;
 import com.korea.jtos.Comment.Comment;
 import com.korea.jtos.Comment.CommentForm;
 import com.korea.jtos.User.SiteUser;
@@ -42,6 +43,16 @@ public class QuestionController {
         return "question_list";
     }
 
+    @GetMapping("/list/{categoryId}")
+    public String listByCategory(Model model,
+                                 @PathVariable(name = "categoryId") int categoryId,
+                                 @RequestParam(name = "page", defaultValue = "0") int page) {
+        Page<Question> paging = this.questionService.getListByCategory(categoryId, page);
+        model.addAttribute("paging", paging);
+        model.addAttribute("categoryId", categoryId);
+        return "question_list";
+    }
+
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id,
                          @ModelAttribute("answerForm") AnswerForm answerForm, BindingResult answerBindingResult,
@@ -63,10 +74,8 @@ public class QuestionController {
         if (!model.containsAttribute("org.springframework.validation.BindingResult.commentForm")) {
             model.addAttribute("org.springframework.validation.BindingResult.commentForm", commentBindingResult);
         }
-
         return "question_detail";
     }
-
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
@@ -132,7 +141,6 @@ public class QuestionController {
         this.questionService.vote(question, siteUser);
         return String.format("redirect:/question/detail/%s", id);
     }
-
 
     @GetMapping(value = "/voter/{id}")
     public String sortByPopularity(Model model, @PathVariable("id") Integer id,

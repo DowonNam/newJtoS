@@ -2,6 +2,7 @@ package com.korea.jtos.Question;
 
 
 import com.korea.jtos.Answer.Answer;
+import com.korea.jtos.Category.Category;
 import com.korea.jtos.DataNotFoundException;
 import com.korea.jtos.User.SiteUser;
 import jakarta.persistence.criteria.*;
@@ -59,6 +60,12 @@ public class QuestionService {
             throw new DataNotFoundException("question not found");
         }
     }
+
+    public Page<Question> getListByCategory(int categoryId, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createDate"));
+        return questionRepository.findByCategoryIdOrderByCreateDateDesc(categoryId, pageable);
+    }
+
 
     public void create(String subject, String content, SiteUser author) {
         Question q = new Question();

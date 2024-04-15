@@ -4,6 +4,8 @@ package com.korea.jtos;
 import com.korea.jtos.Answer.Answer;
 import com.korea.jtos.Answer.AnswerRepository;
 import com.korea.jtos.Answer.AnswerService;
+import com.korea.jtos.Category.Category;
+import com.korea.jtos.Category.CategoryService;
 import com.korea.jtos.Question.Question;
 import com.korea.jtos.Question.QuestionRepository;
 import com.korea.jtos.Question.QuestionService;
@@ -25,13 +27,15 @@ class JtosApplicationTests {
     private QuestionService questionService;
     @Autowired
     private AnswerService answerService;
+    @Autowired
+    private CategoryService categoryService;
 
     @Test
     void testJpa() {
-        for(int i = 0; i < 25; i++){
-            Question question = this.questionService.getQuestion(912);;
-            String content = String.format("내용무입니다:[%03d]", i);
-            this.answerService.create(question, content, null);
+        for(int i = 0; i < 3; i++){
+//            Question question = this.questionService.getQuestion(912);;
+//            String content = String.format("내용무입니다:[%03d]", i);
+//            this.answerService.create(question, content, null);
         }
     }
 }

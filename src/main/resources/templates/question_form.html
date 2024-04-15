@@ -8,14 +8,15 @@
             <label for="subject" class="form-label">제목</label>
             <input type="text" th:field="*{subject}" class="form-control">
         </div>
-<!-- 카테고리 -->
+        <!-- 카테고리 -->
         <div class="mb-3">
-            <label for="subject" class="form-label">카테고리</label>
-            <select class="form-select" th:field="*{subject}">
-                <option th:each="question : ${questionList}" th:value="${question.id}" th:text="${question.id}"></option>
+            <label for="Category_id" class="form-label">카테고리</label>
+            <select class="form-select" th:field="*{category}" id="Category_id">
+                <option value="">카테고리를 선택하세요</option>
+                <option th:each="category : ${categoryList}" th:value="${category.id}" th:text="${category.name}"></option>
             </select>
         </div>
-<!-- 카테고리 -->
+        <!-- 카테고리 -->
 <div class="mb-3">
             <label for="content" class="form-label">내용</label>
             <textarea th:field="*{content}" class="form-control" rows="10"></textarea>
