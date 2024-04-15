@@ -51,4 +51,7 @@ public class CategoryService {
         this.categoryRepository.delete(category);
     }
 
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
+    }
 }

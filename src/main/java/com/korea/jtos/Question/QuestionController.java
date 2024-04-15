@@ -8,6 +8,7 @@ import com.korea.jtos.Answer.Answer;
 import com.korea.jtos.Answer.AnswerForm;
 import com.korea.jtos.Answer.AnswerService;
 import com.korea.jtos.Category.Category;
+import com.korea.jtos.Category.CategoryService;
 import com.korea.jtos.Comment.Comment;
 import com.korea.jtos.Comment.CommentForm;
 import com.korea.jtos.User.SiteUser;
@@ -33,6 +34,7 @@ public class QuestionController {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final UserService userService;
+    private final CategoryService categoryService;
 
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
@@ -79,7 +81,9 @@ public class QuestionController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String questionCreate(QuestionForm questionForm) {
+    public String questionCreate(QuestionForm questionForm,Model model) {
+        List<Category> categoryList = categoryService.getAllCategories(); // 카테고리 서비스를 통해 카테고리 목록을 가져옴
+        model.addAttribute("categoryList", categoryList); // 모델에 카테고리 목록 추가
         return "question_form";
     }
 
@@ -90,7 +94,7 @@ public class QuestionController {
             return "question_form";
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.questionService.create(questionForm.getSubject(), questionForm.getContent(), siteUser);
+        this.questionService.create(questionForm.getSubject(), questionForm.getContent(), siteUser, questionForm.getCategory());
         return "redirect:/question/list";
     }
 
