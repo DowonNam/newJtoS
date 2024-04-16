@@ -24,6 +24,41 @@ public class UserController {
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
 
+    @GetMapping("/modifyPassword")
+    private String modifyPassword(PasswordModifyForm passwordModifyForm) {
+        return "modifyPassword_form";
+    }
+
+    @PostMapping("/modifyPassword")
+    public String modifyPassword(@Valid PasswordModifyForm passwordModifyForm,
+                                 BindingResult bindingResult, Principal principal, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "modifyPassword_form";
+        }
+
+        // 비밀번호와 비밀번호 확인이 일치하는지 검사
+        if (!passwordModifyForm.getPassword1().equals(passwordModifyForm.getPassword2())) {
+            model.addAttribute("error", "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+            return "modifyPassword_form";
+        }
+
+        try {
+            String username = principal.getName(); // 현재 로그인한 사용자의 username
+            SiteUser user = this.userService.getUser(username);
+            if (!passwordEncoder.matches(passwordModifyForm.getPassword(), user.getPassword())) {
+                model.addAttribute("error", "현재 비밀번호가 일치하지 않습니다.");
+                return "modifyPassword_form";
+            }
+
+            String newPassword = passwordModifyForm.getPassword1();
+            this.userService.modifyPassword(user, newPassword);
+            return "redirect:/user/login";
+        } catch (DataNotFoundException e) {
+            model.addAttribute("error", "사용자가 존재하지 않습니다.");
+            return "modifyPassword_form";
+        }
+    }
+
     @GetMapping("/findPassword")
     private String findPassword(UserPasswordModifyForm userPasswordModifyForm) {
         return "findPassword_form";
