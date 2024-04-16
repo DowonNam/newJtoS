@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +22,7 @@ public class UserController {
 
     private final UserService userService;
     private final MailService mailService;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/findPassword")
     private String findPassword(UserPasswordModifyForm userPasswordModifyForm) {
@@ -42,10 +44,10 @@ public class UserController {
                 model.addAttribute("error", "아이디와 이메일이 일치하지 않습니다. 다시 확인해 주세요.");
                 return "findPassword_form";
             }
-            String newPassword = this.userService.generateTemporaryPassword();
-            this.userService.modifyPassword(user, newPassword);
+            String password = this.userService.generateTemporaryPassword();
+            this.userService.modifyPassword(user, password);
             mailService.sendPasswordResetEmail(user.getEmail(), "임시 비밀번호",
-                    "임시 비밀번호 : " + newPassword + " 로그인 후 비밀번호 변경 필수.");
+                    "임시 비밀번호 : " + password + " 로그인 후 비밀번호 변경 필수.");
             return "redirect:/user/login";
         } catch (DataNotFoundException e) {
             return "findPassword_form";

@@ -29,10 +29,10 @@ public class UserService {
         return sb.toString();
     }
 
-    public SiteUser modifyPassword(SiteUser user,String newPassword){
-        user.setPassword(newPassword);
-        this.userRepository.save(user);
-        return user;
+    public SiteUser modifyPassword(SiteUser user, String password) {
+        String encryptedPassword = passwordEncoder.encode(password);
+        user.setPassword(encryptedPassword);
+        return this.userRepository.save(user);
     }
 
     public SiteUser create(String username, String email, String password) {
