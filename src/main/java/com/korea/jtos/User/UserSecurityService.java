@@ -19,7 +19,7 @@ public class UserSecurityService implements UserDetailsService {
     private final UserRepository userRepository;
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<SiteUser> _Siteuser = this.userRepository.findByusername(username);
+        Optional<SiteUser> _Siteuser = this.userRepository.findByUsername(username);
         if (_Siteuser.isEmpty()) {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
         }
@@ -32,3 +32,4 @@ public class UserSecurityService implements UserDetailsService {
         return new User(siteUser.getUsername(),siteUser.getPassword(),authorities);
     }
 }
+

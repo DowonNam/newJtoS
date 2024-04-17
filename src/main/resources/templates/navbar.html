@@ -12,11 +12,23 @@
                     <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/logout}">로그아웃</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/user/signup}">회원가입</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/findPassword}">비밀번호 찾기</a>
                     <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/modifyPassword}">비밀번호 변경</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/signup}">회원가입</a>
+                </li>
+            </ul>
+            <!-- 프로필 메뉴 아이템을 오른쪽으로 이동 -->
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <!-- 사용자 이름을 텍스트로 표시하고 사용자 프로필 페이지로 이동 -->
+                    <a class="nav-link" sec:authorize="isAuthenticated()"
+                       th:href="@{|/user/profile/${#authentication.principal.username}|}" th:text="${#authentication.principal.username}">User Profile</a>
+                </li>
+                <li class="nav-item">
+                    <!-- 사용자 닉네임을 동적으로 표시하고 사용자 프로필 페이지로 이동 -->
+                    <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/profile}" th:text="${userNickname}">User Nickname</a>
                 </li>
             </ul>
         </div>

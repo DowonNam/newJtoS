@@ -51,10 +51,22 @@
         </ul>
     </aside>
 <!--사이드바-->
-
+    <head>
+        <style>
+            .btn-custom-black {
+                background-color: black; /* 검정색 배경 설정 */
+                color: white; /* 흰색 글자 설정 */
+                border: 1px solid black; /* 검정색 테두리 설정 */
+            }
+            .btn-custom-black:hover {
+                background-color: #333333; /* 호버 시 배경색 변경 */
+                color: white; /* 호버 시 글자색 유지 */
+            }
+        </style>
+    </head>
     <div class="row my-3">
         <div class="col-6">
-            <a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
+            <a th:href="@{/question/create}" class="btn btn-custom-black">질문 등록하기</a>
         </div>
         <div class="col-6">
             <div class="input-group">
@@ -87,45 +99,76 @@
         </tbody>
     </table>
     <!-- 페이징처리 시작 -->
-    <div th:if="${!paging.isEmpty()}">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
-                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number-1}">
-                    <span>이전</span>
-                </a>
-            </li>
-            <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
-                th:if="${page >= paging.number-5 and page <= paging.number+5}"
-                th:classappend="${page == paging.number} ? 'active'"
-                class="page-item">
-                <a th:text="${page}" class="page-link" href="javascript:void(0)" th:data-page="${page}"></a>
-            </li>
-            <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
-                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number+1}">
-                    <span>다음</span>
-                </a>
-            </li>
-        </ul>
+    <head>
+        <style>
+            .pagination .page-link {
+                color: black; /* 텍스트 색상을 검정색으로 설정 */
+                background-color: white; /* 배경색을 흰색으로 설정 */
+                border: 1px solid black; /* 검정색 테두리 설정 */
+            }
+            .pagination .page-link:hover {
+                background-color: #f8f9fa; /* 마우스 오버 시 배경색 변경 */
+                color: black; /* 마우스 오버 시 글자색 검정으로 유지 */
+            }
+            .pagination .active .page-link {
+                background-color: #e9ecef; /* 활성 페이지 배경색 회색(부트스트랩 기본색) */
+                color: black; /* 활성 페이지 글자색 검정 */
+            }
+            .pagination .disabled .page-link {
+                color: grey; /* 비활성 페이지 글자색 회색 */
+                background-color: white; /* 비활성 페이지 배경색 흰색 */
+                border: 1px solid grey; /* 비활성 페이지 테두리 회색 */
+            }
+            /* 추가된 스타일 */
+            .pagination .navigation .page-link {
+                background-color: black; /* "이전", "다음" 배경색 검정 */
+                color: white; /* "이전", "다음" 글자색 흰색 */
+            }
+            .pagination .navigation .page-link:hover {
+                background-color: #333333; /* 마우스 오버 시 배경색 어두운 회색 */
+            }
+        </style>
+    </head>
+    <div class="container my-3">
+        <div th:if="${!paging.isEmpty()}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item navigation" th:classappend="${!paging.hasPrevious} ? 'disabled'">
+                    <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number-1}">
+                        <span>이전</span>
+                    </a>
+                </li>
+                <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+                    th:if="${page >= paging.number-5 and page <= paging.number+5}"
+                    th:classappend="${page == paging.number} ? 'active'"
+                    class="page-item">
+                    <a th:text="${page}" class="page-link" href="javascript:void(0)" th:data-page="${page}"></a>
+                </li>
+                <li class="page-item navigation" th:classappend="${!paging.hasNext} ? 'disabled'">
+                    <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number+1}">
+                        <span>다음</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- 페이징처리 끝 -->
+        <form th:action="@{/question/list}" method="get" id="searchForm">
+            <input type="hidden" id="kw" name="kw" th:value="${kw}">
+            <input type="hidden" id="page" name="page" th:value="${paging.number}">
+        </form>
     </div>
-    <!-- 페이징처리 끝 -->
-    <form th:action="@{/question/list}" method="get" id="searchForm">
-        <input type="hidden" id="kw" name="kw" th:value="${kw}">
-        <input type="hidden" id="page" name="page" th:value="${paging.number}">
-    </form>
-</div>
-<script layout:fragment="script" type='text/javascript'>
-    const page_elements = document.getElementsByClassName("page-link");
-    Array.from(page_elements).forEach(function(element) {
-        element.addEventListener('click', function() {
-            document.getElementById('page').value = this.dataset.page;
+    <script layout:fragment="script" type='text/javascript'>
+        const page_elements = document.getElementsByClassName("page-link");
+        Array.from(page_elements).forEach(function(element) {
+            element.addEventListener('click', function() {
+                document.getElementById('page').value = this.dataset.page;
+                document.getElementById('searchForm').submit();
+            });
+        });
+        const btn_search = document.getElementById("btn_search");
+        btn_search.addEventListener('click', function() {
+            document.getElementById('kw').value = document.getElementById('search_kw').value;
+            document.getElementById('page').value = 0;
             document.getElementById('searchForm').submit();
         });
-    });
-    const btn_search = document.getElementById("btn_search");
-    btn_search.addEventListener('click', function() {
-        document.getElementById('kw').value = document.getElementById('search_kw').value;
-        document.getElementById('page').value = 0;  // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
-        document.getElementById('searchForm').submit();
-    });
-</script>
+    </script>
 </html>

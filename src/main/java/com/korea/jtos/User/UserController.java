@@ -6,6 +6,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +25,29 @@ public class UserController {
     private final UserService userService;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
+
+    @GetMapping("/profile/{userId}")
+    public String userProfile(Model model, Principal principal) {
+        // 현재 로그인된 사용자의 유저네임을 Principal 객체에서 추출
+        String username = principal.getName();
+
+        // 유저네임을 사용하여 사용자 정보 조회
+        SiteUser user = this.userService.getUserByUsername(username);
+
+        // 사용자 정보가 null인지 확인
+        if (user == null) {
+            return "userNotFound"; // 사용자가 존재하지 않을 경우 적절한 처리 필요
+        }
+
+        // 모델에 사용자 정보 추가
+        model.addAttribute("userNickname",user.getUsernickname());
+        model.addAttribute("userId", user.getId());
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("email", user.getEmail());
+
+        // 프로필 페이지 뷰 이름 반환
+        return "userProfile_form";
+    }
 
     @GetMapping("/modifyPassword")
     private String modifyPassword(PasswordModifyForm passwordModifyForm) {
@@ -105,7 +130,7 @@ public class UserController {
             return "signup_form";
         }
         try {
-            userService.create(userCreateForm.getUsername(), userCreateForm.getEmail(), userCreateForm.getPassword1());
+            userService.create(userCreateForm.getUsername(), userCreateForm.getEmail(), userCreateForm.getPassword1(), userCreateForm.getUsernickname());
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");
@@ -117,7 +142,7 @@ public class UserController {
         }
 
         userService.create(userCreateForm.getUsername(),
-                userCreateForm.getEmail(), userCreateForm.getPassword1());
+                userCreateForm.getEmail(), userCreateForm.getPassword1(),userCreateForm.getUsernickname());
 
         return "redirect:/";
     }
