@@ -77,10 +77,11 @@
     </div>
     <!-- 정렬 버튼 추가 -->
     <div class="btn-group float-end" role="group" aria-label="Basic example">
-        <a th:href="@{/question/list/recentAnswer}">최근 답변순</a>
-        <a >    |    </a>
-        <a th:href="@{/question/list/recentComment}">최근 댓글순</a>
-        <!--        <a class="btn btn-outline-secondary" th:href="@{/question/detail/{id}(id=${question.id})}">최신순</a>-->
+        <a th:href="@{/question/list/recentAnswer}" class="btn btn-link text-decoration-none text-dark">최근 답변순</a>
+        <span class="btn btn-link text-dark">|</span>
+        <a th:href="@{/question/list/recentComment}" class="btn btn-link text-decoration-none text-dark">최근 댓글순</a>
+        <span class="btn btn-link text-dark">|</span>
+        <a th:href="@{/question/list/mostHit}" class="btn btn-link text-decoration-none text-dark">조회수순</a>
     </div>
     <table class="table">
         <thead class="table-dark">

@@ -40,6 +40,7 @@ public interface QuestionRepository extends JpaRepository<Question,Integer>, Jpa
     @Query("SELECT q FROM Question q LEFT JOIN q.commentList a GROUP BY q.id ORDER BY MAX(a.createDate) DESC")
     Page<Question> findAllSortedByRecentComment(Pageable pageable);
 
+
     Page<Question> findByCategoryIdOrderByCreateDateDesc(int categoryId, Pageable pageable);
 
     List<Question> findByAuthorId(Long authorId);

@@ -73,6 +73,12 @@ public class QuestionController {
         model.addAttribute("paging", paging);
         return "question_list";
     }
+    @GetMapping("/list/mostHit")
+    public String listByMostHit(Model model, @RequestParam(name = "page", defaultValue = "0") int page) {
+        Page<Question> paging = this.questionService.getListSortedByMostHit(page);
+        model.addAttribute("paging", paging);
+        return "question_list";
+    }
 
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id,

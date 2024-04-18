@@ -81,6 +81,10 @@ public class QuestionService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createDate"));
         return questionRepository.findAllSortedByRecentComment(pageable);
     }
+    public Page<Question> getListSortedByMostHit(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "hit"));
+        return questionRepository.findAll(pageable);
+    }
 
     public void create(String subject, String content, SiteUser author,Category category) {
         Question q = new Question();
