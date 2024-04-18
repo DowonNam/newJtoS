@@ -45,4 +45,6 @@ public class Question {
 
     @ManyToOne
     private Category category;
+
+    private int hit = 0;
 }

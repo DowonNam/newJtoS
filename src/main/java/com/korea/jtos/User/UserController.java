@@ -1,21 +1,33 @@
 package com.korea.jtos.User;
 
+import com.korea.jtos.Answer.Answer;
+import com.korea.jtos.Answer.AnswerService;
+import com.korea.jtos.Comment.Comment;
+import com.korea.jtos.Comment.CommentService;
 import com.korea.jtos.DataNotFoundException;
 import com.korea.jtos.Mail.MailService;
+import com.korea.jtos.Question.Question;
+import com.korea.jtos.Question.QuestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.security.PublicKey;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -25,8 +37,48 @@ public class UserController {
     private final UserService userService;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
+    private final QuestionService questionService;
+    private final CommentService commentService;
+    private final AnswerService answerService;
 
-    @GetMapping("/profile/{userId}")
+
+    @GetMapping("/profileModify")
+    public String profileModify(ProfileModifyForm profileModifyForm) {
+        return "profileModify_form";
+    }
+
+    @PostMapping("/profileModify")
+    public String profileModify(@Valid ProfileModifyForm profileModifyForm,
+                                BindingResult bindingResult, Principal principal, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "profileModify_form";
+        }
+
+        try {
+            String username = principal.getName(); // 현재 로그인한 사용자의 username
+            SiteUser user = this.userService.getUser(username);
+            String newNickname = profileModifyForm.getUsernickname();
+            String newEmail = profileModifyForm.getEmail();
+            MultipartFile profileImage = profileModifyForm.getProfileImage(); // 프로필 이미지 가져오기
+
+            // 이메일이 비어있으면 기존 이메일로 설정
+            if (newEmail == null || newEmail.isEmpty()) {
+                newEmail = user.getEmail();
+            }
+
+            if (newNickname == null || newNickname.isEmpty()){
+                newNickname = user.getUsernickname();
+            }
+
+            this.userService.modifyProfile(user, newNickname, newEmail, profileImage); // 프로필 이미지도 함께 수정
+            return String.format("redirect:/user/profile/%s", username);
+        } catch (DataNotFoundException e) {
+            model.addAttribute("error", "사용자가 존재하지 않습니다.");
+            return "profileModify_form";
+        }
+    }
+
+    @GetMapping("/profile/{username}")
     public String userProfile(Model model, Principal principal) {
         // 현재 로그인된 사용자의 유저네임을 Principal 객체에서 추출
         String username = principal.getName();
@@ -40,6 +92,14 @@ public class UserController {
         }
 
         // 모델에 사용자 정보 추가
+        model.addAttribute("user", user);
+        List<Question> questions = questionService.findByAuthorId(user.getId());
+        List<Comment> comments = commentService.findByUserId(user.getId());
+        List<Answer> answers = answerService.findByAuthorId(user.getId());
+
+        model.addAttribute("questions", questions);
+        model.addAttribute("comments", comments);
+        model.addAttribute("answers", answers);
         model.addAttribute("userNickname",user.getUsernickname());
         model.addAttribute("userId", user.getId());
         model.addAttribute("username", user.getUsername());
@@ -74,7 +134,6 @@ public class UserController {
                 model.addAttribute("error", "현재 비밀번호가 일치하지 않습니다.");
                 return "modifyPassword_form";
             }
-
             String newPassword = passwordModifyForm.getPassword1();
             this.userService.modifyPassword(user, newPassword);
             return "redirect:/user/login";

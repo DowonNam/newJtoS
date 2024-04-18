@@ -75,6 +75,13 @@
             </div>
         </div>
     </div>
+    <!-- 정렬 버튼 추가 -->
+    <div class="btn-group float-end" role="group" aria-label="Basic example">
+        <a th:href="@{/question/list/recentAnswer}">최근 답변순</a>
+        <a >    |    </a>
+        <a th:href="@{/question/list/recentComment}">최근 댓글순</a>
+        <!--        <a class="btn btn-outline-secondary" th:href="@{/question/detail/{id}(id=${question.id})}">최신순</a>-->
+    </div>
     <table class="table">
         <thead class="table-dark">
         <tr class="text-center">
@@ -82,6 +89,7 @@
             <th style="width:50%">제목</th>
             <th>글쓴이</th>
             <th>작성일시</th>
+            <th>조회수</th>
         </tr>
         </thead>
         <tbody>
@@ -95,6 +103,7 @@
             </td>
             <td><span th:if="${question.author != null}" th:text="${question.author.username}"></span></td>
             <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:text="${question.hit}"></td>  <!-- 조회수 출력 -->
         </tr>
         </tbody>
     </table>

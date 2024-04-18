@@ -7,7 +7,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Optional;
 
@@ -36,8 +38,18 @@ public class UserService {
         return this.userRepository.save(user);
     }
 
-    public SiteUser modifyProfile(SiteUser user, String email){
+    public SiteUser modifyProfile(SiteUser user, String usernickname, String email, MultipartFile profileImage) {
+        user.setUsernickname(usernickname);
         user.setEmail(email);
+        if (profileImage != null && !profileImage.isEmpty()) {
+            try {
+                byte[] imageData = profileImage.getBytes();
+                user.setProfileImage(imageData);
+            } catch (IOException e) {
+                e.printStackTrace();
+                // 예외 처리 필요
+            }
+        }
         return this.userRepository.save(user);
     }
 

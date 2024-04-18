@@ -63,4 +63,7 @@ public class AnswerService {
         Pageable pageable = PageRequest.of(page, 5);
         return answerRepository.findByQuestionIdOrderedByVoteCount(questionId, pageable);
     }
+    public List<Answer> findByAuthorId(Long authorId) {
+        return answerRepository.findByAuthorId(authorId);
+    }
 }

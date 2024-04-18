@@ -2,6 +2,7 @@ package com.korea.jtos.Question;
 
 
 import com.korea.jtos.Answer.Answer;
+import com.korea.jtos.Answer.AnswerRepository;
 import com.korea.jtos.Category.Category;
 import com.korea.jtos.DataNotFoundException;
 import com.korea.jtos.User.SiteUser;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ import java.util.Optional;
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
 
     private Specification<Question> search(String kw) {
         return new Specification<>() {
@@ -55,6 +58,9 @@ public class QuestionService {
     public Question getQuestion(Integer id) {
         Optional<Question> question = this.questionRepository.findById(id);
         if (question.isPresent()) {
+            Question currentQuestion = question.get();
+            currentQuestion.setHit(currentQuestion.getHit() + 1);  // 조회수 1 증가
+            questionRepository.save(currentQuestion);  // 변경된 조회수를 저장
             return question.get();
         } else {
             throw new DataNotFoundException("question not found");
@@ -66,6 +72,15 @@ public class QuestionService {
         return questionRepository.findByCategoryIdOrderByCreateDateDesc(categoryId, pageable);
     }
 
+    public Page<Question> getListSortedByRecentAnswer(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createDate"));
+        return questionRepository.findAllSortedByRecentAnswer(pageable);
+    }
+
+    public Page<Question> getListSortedByRecentComment(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createDate"));
+        return questionRepository.findAllSortedByRecentComment(pageable);
+    }
 
     public void create(String subject, String content, SiteUser author,Category category) {
         Question q = new Question();
@@ -92,6 +107,10 @@ public class QuestionService {
     public void vote(Question question, SiteUser siteUser) {
         question.getVoter().add(siteUser);
         this.questionRepository.save(question);
+    }
+
+    public List<Question> findByAuthorId(Long authorId) {
+        return questionRepository.findByAuthorId(authorId);
     }
 
 }

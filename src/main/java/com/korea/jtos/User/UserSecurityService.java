@@ -1,6 +1,9 @@
 package com.korea.jtos.User;
 
+import com.korea.jtos.Comment.CommentRepository;
+import com.korea.jtos.Question.QuestionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -17,6 +20,11 @@ import java.util.Optional;
 @Service
 public class UserSecurityService implements UserDetailsService {
     private final UserRepository userRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+    @Autowired
+    private CommentRepository commentRepository;
+
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<SiteUser> _Siteuser = this.userRepository.findByUsername(username);

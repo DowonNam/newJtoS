@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
 @RequestMapping("/question")
 @RequiredArgsConstructor
 @Controller
@@ -52,6 +53,24 @@ public class QuestionController {
         Page<Question> paging = this.questionService.getListByCategory(categoryId, page);
         model.addAttribute("paging", paging);
         model.addAttribute("categoryId", categoryId);
+        return "question_list";
+    }
+
+    @GetMapping("/list/recentAnswer")
+    public String listByRecentAnswer(Model model,
+                                     @RequestParam(name = "page", defaultValue = "0") int page,
+                                     @RequestParam(name = "kw", defaultValue = "") String kw) {
+        Page<Question> paging = this.questionService.getListSortedByRecentAnswer(page);
+        model.addAttribute("paging", paging);
+        return "question_list";
+    }
+
+    @GetMapping("/list/recentComment")
+    public String listByRecentComment(Model model,
+                                     @RequestParam(name = "page", defaultValue = "0") int page,
+                                     @RequestParam(name = "kw", defaultValue = "") String kw) {
+        Page<Question> paging = this.questionService.getListSortedByRecentComment(page);
+        model.addAttribute("paging", paging);
         return "question_list";
     }
 

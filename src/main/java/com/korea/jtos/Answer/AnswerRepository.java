@@ -16,5 +16,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
     Page<Answer> findByQuestionIdOrderedByVoteCount(@Param("questionId") Integer questionId, Pageable pageable);
 
     Page<Answer> findByQuestionId(Integer questionId, Pageable pageable);
+    List<Answer> findByAuthorId(Long authorId);
 }
 

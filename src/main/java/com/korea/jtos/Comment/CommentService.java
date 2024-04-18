@@ -9,6 +9,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -75,5 +76,8 @@ public class CommentService {
     public void vote(Comment comment,SiteUser siteUser){
         comment.getVoter().add(siteUser);
         this.commentRepository.save(comment);
+    }
+    public List<Comment> findByUserId(Long userId) {
+        return commentRepository.findByAuthor_Id(userId);
     }
 }
