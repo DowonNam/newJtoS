@@ -86,5 +86,17 @@ public class UserService {
         }
     }
 
+    public String getUsernameByEmail(String email) {
+        SiteUser user = userRepository.findByEmail(email);
+        if (user != null) {
+            return user.getUsername();
+        } else {
+            // 이메일과 관련된 사용자가 없는 경우 예외처리 또는 기본값을 반환할 수 있습니다.
+            return "Unknown";
+        }
+    }
 
+    public SiteUser getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }

@@ -20,10 +20,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 
-
+@Controller
 @RequestMapping("/answer")
 @RequiredArgsConstructor
-@Controller
 public class AnswerController {
 
     private final QuestionService questionService;
