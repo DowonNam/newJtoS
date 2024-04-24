@@ -37,4 +37,18 @@ public class Comment {
 
     @ManyToMany
     Set<SiteUser> voter;
+
+    private LocalDateTime lastCommentedAt; // 최근 댓글 시간 필드 추가
+
+    // 생성자, getter 및 setter
+
+    // 댓글이 저장되거나 업데이트될 때마다 최근 댓글 시간을 업데이트하는 메서드
+    @PrePersist
+    @PreUpdate
+    public void updateLastCommentedAt() {
+        if(this.question != null){
+            this.question.setLastCommentedAt(LocalDateTime.now());
+        }
+
+    }
 }

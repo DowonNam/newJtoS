@@ -76,12 +76,14 @@
         </div>
     </div>
     <!-- 정렬 버튼 추가 -->
-    <div class="btn-group float-end" role="group" aria-label="Basic example">
-        <a th:href="@{/question/list/recentAnswer}" class="btn btn-link text-decoration-none text-dark">최근 답변순</a>
-        <span class="btn btn-link text-dark">|</span>
-        <a th:href="@{/question/list/recentComment}" class="btn btn-link text-decoration-none text-dark">최근 댓글순</a>
-        <span class="btn btn-link text-dark">|</span>
-        <a th:href="@{/question/list/mostHit}" class="btn btn-link text-decoration-none text-dark">조회수순</a>
+    <!-- 정렬 버튼 추가 -->
+    <div class="btn-group float-end" role="group">
+        <!-- 최근 답변순 -->
+        <a th:href="@{/question/list(categoryId=${categoryId != null ? categoryId : ''}, page=${page}, kw=${kw}, sort='recentAnswer')}" class="btn btn-link">최근 답변순</a>
+        <!-- 최근 댓글순 -->
+        <a th:href="@{/question/list(categoryId=${categoryId != null ? categoryId : ''}, page=${page}, kw=${kw}, sort='recentComment')}" class="btn btn-link">최근 댓글순</a>
+        <!-- 조회수순 -->
+        <a th:href="@{/question/list(categoryId=${categoryId != null ? categoryId : ''}, page=${page}, kw=${kw}, sort='popularity')}" class="btn btn-link">조회수순</a>
     </div>
     <table class="table">
         <thead class="table-dark">

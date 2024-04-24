@@ -36,6 +36,19 @@ public class Answer {
     @ManyToMany
     Set<SiteUser> voter;
 
-    @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.REMOVE)
     private List<Comment> commentList;
+
+    private LocalDateTime lastAnsweredAt; // 최근 답변 시간 필드 추가
+
+    // 생성자, getter 및 setter
+
+    // 답변이 저장되거나 업데이트될 때마다 최근 답변 시간을 업데이트하는 메서드
+    @PrePersist
+    @PreUpdate
+    public void updateQuestionLastAnsweredAt() {
+        if (this.question != null) {
+            this.question.setLastAnsweredAt(LocalDateTime.now());
+        }
     }
+}

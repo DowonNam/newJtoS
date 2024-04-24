@@ -38,11 +38,21 @@ public class QuestionController {
     private final CategoryService categoryService;
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
-                       @RequestParam(value = "kw", defaultValue = "") String kw) {
-        Page<Question> paging = this.questionService.getList(page, kw);
+    public String list(Model model,
+                       @RequestParam(required = false) Integer categoryId,
+                       @RequestParam(defaultValue = "0") int page,
+                       @RequestParam(defaultValue = "") String kw,
+                       @RequestParam(defaultValue = "newest") String sort) {
+        Page<Question> paging;
+        if (categoryId != null) {
+            paging = this.questionService.getListByCategoryAndSort(categoryId, page, kw, sort);
+        } else {
+            paging = this.questionService.getListSorted(page, kw, sort);
+        }
+
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
+        model.addAttribute("categoryId", categoryId);
         return "question_list";
     }
 
@@ -53,30 +63,6 @@ public class QuestionController {
         Page<Question> paging = this.questionService.getListByCategory(categoryId, page);
         model.addAttribute("paging", paging);
         model.addAttribute("categoryId", categoryId);
-        return "question_list";
-    }
-
-    @GetMapping("/list/recentAnswer")
-    public String listByRecentAnswer(Model model,
-                                     @RequestParam(name = "page", defaultValue = "0") int page,
-                                     @RequestParam(name = "kw", defaultValue = "") String kw) {
-        Page<Question> paging = this.questionService.getListSortedByRecentAnswer(page);
-        model.addAttribute("paging", paging);
-        return "question_list";
-    }
-
-    @GetMapping("/list/recentComment")
-    public String listByRecentComment(Model model,
-                                     @RequestParam(name = "page", defaultValue = "0") int page,
-                                     @RequestParam(name = "kw", defaultValue = "") String kw) {
-        Page<Question> paging = this.questionService.getListSortedByRecentComment(page);
-        model.addAttribute("paging", paging);
-        return "question_list";
-    }
-    @GetMapping("/list/mostHit")
-    public String listByMostHit(Model model, @RequestParam(name = "page", defaultValue = "0") int page) {
-        Page<Question> paging = this.questionService.getListSortedByMostHit(page);
-        model.addAttribute("paging", paging);
         return "question_list";
     }
 

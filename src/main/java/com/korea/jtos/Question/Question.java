@@ -47,4 +47,20 @@ public class Question {
     private Category category;
 
     private int hit = 0;
+
+    // 최근 답변 시간을 나타내는 필드 추가
+    private LocalDateTime lastAnsweredAt;
+
+    // 최근 댓글 시간을 나타내는 필드 추가
+    private LocalDateTime lastCommentedAt;
+
+    // 최근 답변 시간을 업데이트하는 메서드
+    public void updateLastAnsweredAt() {
+        this.lastAnsweredAt = LocalDateTime.now();
+    }
+
+    // 최근 댓글 시간을 업데이트하는 메서드
+    public void updateLastCommentedAt() {
+        this.lastCommentedAt = LocalDateTime.now();
+    }
 }

@@ -46,6 +46,12 @@ public class QuestionService {
         };
     }
 
+    public Page<Question> getListSorted(int page, String kw, String sort) {
+        Pageable pageable = PageRequest.of(page, 10, getSortingCriteria(sort));
+        Specification<Question> spec = search(kw);  // 검색 조건 생성
+        return questionRepository.findAll(spec, pageable);
+    }
+
     public Page<Question> getList(int page,String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         // CreateDate 말고 ID로 정렬해야 정렬이 제대로 가능
@@ -72,20 +78,57 @@ public class QuestionService {
         return questionRepository.findByCategoryIdOrderByCreateDateDesc(categoryId, pageable);
     }
 
-    public Page<Question> getListSortedByRecentAnswer(int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createDate"));
-        return questionRepository.findAllSortedByRecentAnswer(pageable);
+    public Page<Question> getListByCategoryAndSort(Integer categoryId, int page, String kw, String sort) {
+        Pageable pageable = PageRequest.of(page, 10, getSortingCriteria(sort));
+        Specification<Question> spec = searchByCategoryAndKeyword(categoryId, kw);  // 카테고리별 및 키워드 검색 조건 생성
+        return questionRepository.findAll(spec, pageable);
     }
 
-    public Page<Question> getListSortedByRecentComment(int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createDate"));
-        return questionRepository.findAllSortedByRecentComment(pageable);
-    }
-    public Page<Question> getListSortedByMostHit(int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "hit"));
-        return questionRepository.findAll(pageable);
+    // 카테고리별 및 키워드 검색 조건 생성 메서드
+    private Specification<Question> searchByCategoryAndKeyword(Integer categoryId, String kw) {
+        return (root, query, cb) -> {
+            query.distinct(true);  // 중복 제거
+            Predicate predicate = cb.conjunction();
+            if (categoryId != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("category").get("id"), categoryId));
+            }
+            if (kw != null && !kw.isEmpty()) {
+                String likePattern = "%" + kw + "%";
+                predicate = cb.and(predicate, cb.or(
+                        cb.like(root.get("subject"), likePattern),
+                        cb.like(root.get("content"), likePattern),
+                        cb.like(root.get("author").get("username"), likePattern),
+                        cb.like(root.join("answerList").get("content"), likePattern),
+                        cb.like(root.join("answerList").get("author").get("username"), likePattern)
+                ));
+            }
+            return predicate;
+        };
     }
 
+    public Page<Question> getListByCategoryAndSort(int categoryId, String sort, Pageable pageable) {
+        if (sort.equals("recentAnswer")) {
+            return questionRepository.findByCategoryId(categoryId, pageable); // 최근 답변순으로 정렬된 페이지 반환
+        } else if (sort.equals("recentComment")) {
+            return questionRepository.findAllByCategoryIdOrderByCreateDateDesc(categoryId, pageable); // 최근 댓글순으로 정렬된 페이지 반환
+        } else {
+            return questionRepository.findAllByCategoryIdOrderByCreateDateDesc(categoryId, pageable); // 기본적으로 글 작성일 순으로 정렬된 페이지 반환
+        }
+    }
+
+    // 정렬 기준에 따른 Sort 객체 생성 메서드
+    private Sort getSortingCriteria(String sortKey) {
+        switch (sortKey) {
+            case "recentAnswer":
+                return Sort.by(Sort.Direction.DESC, "lastAnsweredAt");
+            case "recentComment":
+                return Sort.by(Sort.Direction.DESC, "lastCommentedAt");
+            case "popularity":
+                return Sort.by(Sort.Direction.DESC, "hit");
+            default:
+                return Sort.by(Sort.Direction.DESC, "createDate");
+        }
+    }
     public void create(String subject, String content, SiteUser author,Category category) {
         Question q = new Question();
         q.setSubject(subject);
