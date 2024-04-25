@@ -53,7 +53,6 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             return "profileModify_form";
         }
-
         try {
             String username = principal.getName(); // 현재 로그인한 사용자의 username
             SiteUser user = this.userService.getUser(username);

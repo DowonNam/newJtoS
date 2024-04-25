@@ -1,9 +1,9 @@
-/* 노멀라이즈 시작 */
+/* 노멀라이즈 시작
 body, ul, li {
   margin: 0;
   padding: 0;
 
-}
+} */
 
 a {
   color: inherit;   	    /* 부모 엘리먼트의 값을 물려받는다 */

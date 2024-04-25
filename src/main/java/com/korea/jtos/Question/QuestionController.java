@@ -121,6 +121,8 @@ public class QuestionController {
         questionForm.setContent(question.getContent());
         List<Category> categoryList = categoryService.getAllCategories(); // 카테고리 서비스를 통해 카테고리 목록을 가져옴
         model.addAttribute("categoryList", categoryList); // 모델에 카테고리 목록 추가
+        questionForm.setCategory(question.getCategory()); // 이전에 선택한 카테고리를 우선적으로 선택하도록 함
+
         return "question_form";
     }
 
