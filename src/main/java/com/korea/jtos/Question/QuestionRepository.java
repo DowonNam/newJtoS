@@ -37,7 +37,7 @@ public interface QuestionRepository extends JpaRepository<Question,Integer>, Jpa
 
     Page<Question> findByCategoryId(int categoryId, Pageable pageable);
 
-    Page<Question> findByCategoryIdOrderByCreateDateDesc(int categoryId, Pageable pageable);
+    Page<Question> findByCategoryIdOrderByIdDesc(int categoryId, Pageable pageable);
 
     Page<Question> findAllByCategoryIdOrderByCreateDateDesc(int categoryId, Pageable pageable);
 

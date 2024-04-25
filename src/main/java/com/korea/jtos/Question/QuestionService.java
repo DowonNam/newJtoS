@@ -74,8 +74,8 @@ public class QuestionService {
     }
 
     public Page<Question> getListByCategory(int categoryId, int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createDate"));
-        return questionRepository.findByCategoryIdOrderByCreateDateDesc(categoryId, pageable);
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
+        return questionRepository.findByCategoryIdOrderByIdDesc(categoryId, pageable);
     }
 
     public Page<Question> getListByCategoryAndSort(Integer categoryId, int page, String kw, String sort) {
@@ -106,16 +106,6 @@ public class QuestionService {
         };
     }
 
-    public Page<Question> getListByCategoryAndSort(int categoryId, String sort, Pageable pageable) {
-        if (sort.equals("recentAnswer")) {
-            return questionRepository.findByCategoryId(categoryId, pageable); // 최근 답변순으로 정렬된 페이지 반환
-        } else if (sort.equals("recentComment")) {
-            return questionRepository.findAllByCategoryIdOrderByCreateDateDesc(categoryId, pageable); // 최근 댓글순으로 정렬된 페이지 반환
-        } else {
-            return questionRepository.findAllByCategoryIdOrderByCreateDateDesc(categoryId, pageable); // 기본적으로 글 작성일 순으로 정렬된 페이지 반환
-        }
-    }
-
     // 정렬 기준에 따른 Sort 객체 생성 메서드
     private Sort getSortingCriteria(String sortKey) {
         switch (sortKey) {
@@ -126,7 +116,7 @@ public class QuestionService {
             case "popularity":
                 return Sort.by(Sort.Direction.DESC, "hit");
             default:
-                return Sort.by(Sort.Direction.DESC, "createDate");
+                return Sort.by(Sort.Direction.DESC, "id");
         }
     }
     public void create(String subject, String content, SiteUser author,Category category) {
