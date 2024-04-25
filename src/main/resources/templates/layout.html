@@ -35,11 +35,15 @@
         // IDs of the textareas where the Markdown editor will be applied
         var editorIds = ['markdownEditorQuestion', 'markdownEditorAnswer', 'markdownEditorAnswerEnabled'];
 
-        // Initialize SimpleMDE on each textarea
+        // Initialize SimpleMDE on each textarea with sanitize set to false
         editorIds.forEach(function(id) {
             var element = document.getElementById(id);
             if (element) {
-                new SimpleMDE({ element: element });
+                new SimpleMDE({
+                    element: element,
+                    spellChecker: false,
+                    sanitize: false // XSS attacks should be considered
+                });
             }
         });
     });
