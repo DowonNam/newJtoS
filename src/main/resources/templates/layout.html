@@ -1,42 +1,49 @@
-
 <!doctype html>
 <html lang="ko">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
-    <!-- sbb CSS -->
+
+    <!-- Custom Styles -->
     <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+
     <!-- SimpleMDE CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+
     <title>Hello, sbb!</title>
 </head>
 <body>
-<!-- 네비게이션바 -->
+<!-- Navigation Bar -->
 <nav th:replace="~{navbar :: navbarFragment}"></nav>
-<!-- 기본 템플릿 안에 삽입될 내용 Start -->
+
+<!-- Content Inserted Here from Thymeleaf Fragments -->
 <th:block layout:fragment="content"></th:block>
-<!-- 기본 템플릿 안에 삽입될 내용 End -->
-<!-- Bootstrap JS -->
+
+<!-- Bootstrap JavaScript -->
 <script th:src="@{/bootstrap.min.js}"></script>
-<!-- SimpleMDE JS -->
+
+<!-- SimpleMDE JavaScript -->
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-<!-- 자바스크립트 Start -->
-<th:block layout:fragment="script">
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var editorIds = ['markdownEditorQuestion', 'markdownEditorAnswer', 'markdownEditorComment'];
-            editorIds.forEach(function(id) {
-                var element = document.getElementById(id);
-                if (element) {
-                    new SimpleMDE({ element: element });
-                }
-            });
+
+<!-- Initialize Markdown Editors when Document is Fully Loaded -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // IDs of the textareas where the Markdown editor will be applied
+        var editorIds = ['markdownEditorQuestion', 'markdownEditorAnswer', 'markdownEditorAnswerEnabled'];
+
+        // Initialize SimpleMDE on each textarea
+        editorIds.forEach(function(id) {
+            var element = document.getElementById(id);
+            if (element) {
+                new SimpleMDE({ element: element });
+            }
         });
-    </script>
-</th:block>
-<!-- 자바스크립트 End -->
+    });
+</script>
+
 </body>
 </html>
